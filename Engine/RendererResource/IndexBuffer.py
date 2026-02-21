@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 from Engine.RendererResource.ERenderMode import ERenderMode
-from Engine.RendererResource.ResourceManager import ResourceManager
+from Engine.RendererResource import ResourceManager
 
 
 class IndexBuffer(ABC):

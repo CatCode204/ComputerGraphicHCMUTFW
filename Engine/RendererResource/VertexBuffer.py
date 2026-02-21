@@ -1,9 +1,7 @@
 from abc import ABC, abstractmethod
 
-import numpy as np
-
 from .ERenderMode import ERenderMode
-from .ResourceManager import ResourceManager
+from . import ResourceManager
 
 from dataclasses import dataclass
 
@@ -21,7 +19,7 @@ class VertexBuffer(ABC):
 
     @staticmethod
     def Create() -> "VertexBuffer":
-        return ResourceManager.CreateVertexBuffer()
+        return ResourceManager.ResourceManager.CreateVertexBuffer()
 
     def __del__(self):
         self.Delete()

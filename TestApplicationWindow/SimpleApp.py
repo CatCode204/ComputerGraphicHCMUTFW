@@ -1,17 +1,15 @@
 from typing import override
 
 from Engine.Core.Application import Application
+from Engine.Core.ApplicationCofiguration import ApplicationConfiguration
 from Engine.Core.EventSystem.EventContexts.KeyboardEvents import KeyboardPressedEvent
 from Engine.Core.EventSystem.EventContexts.MouseEvents import MouseMovedEvent, MouseButtonPressedEvent, \
     MouseButtonReleasedEvent
-from Engine.Core.EventSystem.EventDispatcher import EventDispatcher
-from Engine.Core.InputSystem.EKeycode import EKeycode
-from Engine.Core.Window.NativeWindow import NativeWindow
-
+from Engine.Renderer.Renderer import Renderer
 
 class SimpleApp(Application):
-    def __init__(self, window : NativeWindow, eventDispatcher : EventDispatcher):
-        super().__init__(window,eventDispatcher)
+    def __init__(self, appConfig : ApplicationConfiguration = ApplicationConfiguration()):
+        super().__init__(appConfig)
 
     @override
     def _ClientInit(self):
@@ -22,7 +20,7 @@ class SimpleApp(Application):
 
     @override
     def _ClientLoop(self):
-        pass
+        Renderer.ClearColor(1,0,1,1)
 
     @override
     def _ClientShutdown(self):

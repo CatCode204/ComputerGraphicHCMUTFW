@@ -1,5 +1,6 @@
 from typing import Callable
 
+from Engine.Renderer.ERenderPrimitives import ERenderPrimitives
 from Engine.Renderer.RenderCommandQueue import RenderCommandQueue
 from Engine.Renderer.RendererAPI import ERendererSpec
 from Engine.Renderer.RendererCommand import RendererCommand
@@ -31,6 +32,11 @@ class Renderer:
     @staticmethod
     def EndScene(): # UPGRADE LATER
         return False
+
+    @staticmethod
+    def DrawArray(renderPrimitive : ERenderPrimitives, first : int, count : int):
+        renderCallBack = lambda : RendererCommand.DrawArray(renderPrimitive, first, count)
+        Renderer.RenderCommandQueue.EnqueueCommandCallback(renderCallBack)
 
     @staticmethod
     def ClearColor(r : float,g : float, b : float, a : float):

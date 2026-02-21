@@ -1,7 +1,6 @@
-from typing import override, Callable
-
 from Engine.Renderer.RendererAPI import ERendererSpec
 from Engine.RendererResource.OpenGL.OpenGLIndexBuffer import OpenGLIndexBuffer
+from Engine.RendererResource.OpenGL.OpenGLShader import OpenGLShader
 from Engine.RendererResource.OpenGL.OpenGLVertexBuffer import OpenGLVertexBuffer
 from Engine.RendererResource.VertexBuffer import VertexBuffer
 from Engine.RendererResource.IndexBuffer import IndexBuffer
@@ -14,35 +13,36 @@ class ResourceManager:
     @staticmethod
     def OnInit(rendererSpec : ERendererSpec):
         if rendererSpec == ERendererSpec.OpenGL:
+            print("[RESOURCE MANAGER] INIT WITH OPENGL")
             ResourceManager.Implementor = OpenGLResourceManager()
 
     @staticmethod
     def OnShutdown():
-        pass
+        ResourceManager.Implementor.OnShutdownImpl()
 
     @staticmethod
     def CreateVertexBuffer() -> VertexBuffer:
-        return ResourceManager.Implementor.CreateVertexBuffer()
+        return ResourceManager.Implementor.CreateVertexBufferImpl()
 
     @staticmethod
     def FreeVertexBuffer(vertexBuffer : VertexBuffer):
-        pass
+        ResourceManager.Implementor.FreeVertexBufferImpl(vertexBuffer)
 
     @staticmethod
     def CreateIndexBuffer() -> IndexBuffer:
-        pass
+        return ResourceManager.Implementor.CreateIndexBufferImpl()
 
     @staticmethod
     def FreeIndexBuffer(indexBuffer : IndexBuffer):
-        pass
+        ResourceManager.Implementor.FreeIndexBufferImpl(indexBuffer)
 
     @staticmethod
-    def CreateShader() -> Shader:
-        pass
+    def CreateShader(vertexSource : str, fragmentSource : str) -> Shader:
+        return ResourceManager.Implementor.CreateShaderImpl(vertexSource,fragmentSource)
 
     @staticmethod
     def FreeShader(shader : Shader):
-        pass
+        ResourceManager.Implementor.FreeShaderImpl(shader)
 
     def OnShutdownImpl(self):
         pass
@@ -59,14 +59,14 @@ class ResourceManager:
     def FreeIndexBufferImpl(self, indexBuffer : IndexBuffer):
         pass
 
-    def CreateShaderImpl(self) -> Shader:
+    def CreateShaderImpl(self, vertexSource : str, fragmentSource) -> Shader:
         pass
 
-    def FreeShaderImpl(self):
+    def FreeShaderImpl(self, shader : Shader):
         pass
 
 class OpenGLResourceManager(ResourceManager):
-    def OnShutdownImpl(self):
+    def OnShutdownImpl(self): #DEFAULT
         pass
 
     def CreateVertexBufferImpl(self) -> VertexBuffer:
@@ -81,8 +81,8 @@ class OpenGLResourceManager(ResourceManager):
     def FreeIndexBufferImpl(self, indexBuffer : IndexBuffer):
         indexBuffer.Delete()
 
-    def CreateShaderImpl(self) -> Shader:
-        pass
+    def CreateShaderImpl(self,vertexSource : str, fragmentSource) -> Shader:
+        return OpenGLShader(vertexSource,fragmentSource)
 
-    def FreeShaderImpl(self):
-        pass
+    def FreeShaderImpl(self, shader : Shader):
+        shader.Delete()

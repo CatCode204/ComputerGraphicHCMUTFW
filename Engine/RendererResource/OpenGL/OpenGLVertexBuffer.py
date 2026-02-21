@@ -13,11 +13,14 @@ from ...Renderer.Renderer import Renderer
 class OpenGLVertexBuffer(VertexBuffer):
     def __init__(self):
         super().__init__()
+        self._vboId = 0
         Renderer.Submit(self.__Init)
 
     def __Init(self):
-        self._id = GL.glGenBuffers(1)
-        GL.glBindBuffer(GL.GL_ARRAY_BUFFER, self._id)
+        self._id = GL.glGenVertexArrays(1)
+        self._vboId = GL.glGenBuffers(1)
+        GL.glBindVertexArray(self._id)
+        GL.glBindBuffer(GL.GL_ARRAY_BUFFER, self._vboId)
         GL.glVertexAttribPointer(0,3,GL.GL_FLOAT,GL.GL_FALSE,44,ctypes.c_voidp(0))
         GL.glEnableVertexAttribArray(0)
         GL.glVertexAttribPointer(1,3,GL.GL_FLOAT,GL.GL_FLOAT,44,ctypes.c_voidp(3 * 4))
@@ -26,22 +29,24 @@ class OpenGLVertexBuffer(VertexBuffer):
         GL.glEnableVertexAttribArray(2)
         GL.glVertexAttribPointer(3,3,GL.GL_FLOAT,GL.GL_FLOAT,44,ctypes.c_voidp(8 * 4))
         GL.glEnableVertexAttribArray(3)
-        GL.glBindBuffer(GL.GL_ARRAY_BUFFER,0)
+        GL.glBindVertexArray(0)
+        GL.glBindBuffer(GL.GL_ARRAY_BUFFER, 0)
 
     @override
     def Bind(self):
-        Renderer.Submit(lambda: GL.glBindBuffer(GL.GL_ARRAY_BUFFER, self._id))
+        Renderer.Submit(lambda: GL.glBindVertexArray(self._id))
 
     @override
     def Unbind(self):
-        Renderer.Submit(lambda: GL.glBindBuffer(GL.GL_ARRAY_BUFFER, 0))
+        Renderer.Submit(lambda: GL.glBindVertexArray(0))
 
     @override
     def Delete(self):
         Renderer.Submit(self.__DeleteCallback)
 
     def __DeleteCallback(self):
-        GL.glDeleteBuffers(1, [self._id])
+        GL.glDeleteBuffers(1, [self._vboId])
+        GL.glDeleteVertexArrays(1, [self._id])
         self._size = 0
         self._id = 0
 
@@ -51,11 +56,13 @@ class OpenGLVertexBuffer(VertexBuffer):
 
     def __SetDataCallback(self, data, size: int, renderMode: ERenderMode = ERenderMode.Static):
         self._size = size
-        GL.glBindBuffer(GL.GL_ARRAY_BUFFER, self._id)
+        GL.glBindVertexArray(self._id)
+        GL.glBindBuffer(GL.GL_ARRAY_BUFFER, self._vboId)
         if renderMode == ERenderMode.Static:
             GL.glBufferData(GL.GL_ARRAY_BUFFER, size, data, GL.GL_STATIC_DRAW)
         elif renderMode == ERenderMode.Dynamic:
             GL.glBufferData(GL.GL_ARRAY_BUFFER, size, data, GL.GL_DYNAMIC_DRAW)
         elif renderMode == ERenderMode.Stream:
             GL.glBufferData(GL.GL_ARRAY_BUFFER, size, data, GL.GL_STREAM_DRAW)
+        GL.glBindVertexArray(0)
         GL.glBindBuffer(GL.GL_ARRAY_BUFFER, 0)

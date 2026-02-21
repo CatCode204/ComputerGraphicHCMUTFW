@@ -18,6 +18,12 @@ class NativeWindow(ABC):
         self._eventDispatcher : EventDispatcher = None
         self._inputState : InputState = None
 
+    def SetWindowSize(self, windowSize : tuple[int,int]):
+        self._windowSize = windowSize
+
+    def SetTitle(self, title : str):
+        self._title = title
+
     def SetInputState(self,inputState : InputState):
         self._inputState = inputState
 
