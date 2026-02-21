@@ -4,6 +4,8 @@ from .ERenderPrimitives import ERenderPrimitives
 from .RendererAPI import ERendererSpec
 import OpenGL.GL as gl
 
+import ctypes
+
 class RendererCommand:
     def __new__(cls):
         if cls.sInstance is None:
@@ -28,6 +30,10 @@ class RendererCommand:
     def DrawArray(renderPrimitive : ERenderPrimitives, first : int, count : int):
         RendererCommand.sInstance.DrawArrayImplement(renderPrimitive,first,count)
 
+    @staticmethod
+    def DrawElement(renderPrimitive : ERenderPrimitives,first : int, count : int):
+        RendererCommand.sInstance.DrawElementImplement(renderPrimitive,first,count)
+
     def ClearColorImplement(self, r : float, g : float, b : float, a : float):
         pass
 
@@ -35,6 +41,9 @@ class RendererCommand:
         pass
 
     def DrawArrayImplement(self, renderPrimitive : ERenderPrimitives,first : int, count : int):
+        pass
+
+    def DrawElementImplement(self, renderPrimitive : ERenderPrimitives,first : int, count : int):
         pass
 
     sInstance : "RendererCommand" = None
@@ -57,3 +66,12 @@ class OpenGLRendererCommand(RendererCommand):
             gl.glDrawArrays(gl.GL_TRIANGLE_STRIP, first, count)
         elif renderPrimitive == ERenderPrimitives.TRIANGLE_FAN:
             gl.glDrawArrays(gl.GL_TRIANGLE_FAN, first, count)
+
+    @override
+    def DrawElementImplement(self, renderPrimitive : ERenderPrimitives,first : int, count : int):
+        if renderPrimitive == ERenderPrimitives.TRIANGLES:
+            gl.glDrawElements(gl.GL_TRIANGLES, count, gl.GL_UNSIGNED_INT, ctypes.c_voidp(first))
+        elif renderPrimitive == ERenderPrimitives.TRIANGLE_STRIP:
+            gl.glDrawElements(gl.GL_TRIANGLE_STRIP, count, gl.GL_UNSIGNED_INT, ctypes.c_voidp(first))
+        elif renderPrimitive == ERenderPrimitives.TRIANGLE_FAN:
+            gl.glDrawElements(gl.GL_TRIANGLE_FAN, count, gl.GL_UNSIGNED_INT, ctypes.c_voidp(first))

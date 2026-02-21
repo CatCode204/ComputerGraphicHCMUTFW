@@ -14,7 +14,7 @@ class IndexBuffer(ABC):
 
     @staticmethod
     def Create() -> "IndexBuffer":
-        return ResourceManager.CreateIndexBuffer()
+        return ResourceManager.ResourceManager.CreateIndexBuffer()
 
     @abstractmethod
     def Bind(self):

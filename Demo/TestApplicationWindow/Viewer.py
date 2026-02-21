@@ -1,7 +1,4 @@
-from Engine.Core.ApplicationCofiguration import ApplicationConfiguration
-from Engine.Renderer.RendererAPI import ERendererSpec
-from TestApplicationWindow.SimpleApp import SimpleApp
-from Engine.Core.Window.WindowPlatforms import WindowPlatforms
+from Demo.TestApplicationWindow.SimpleApp import SimpleApp
 
 # applicationConfig = ApplicationConfiguration()
 # applicationConfig.WindowInitSize = (800,600)
@@ -9,4 +6,4 @@ from Engine.Core.Window.WindowPlatforms import WindowPlatforms
 # applicationConfig.WindowFlatformSpec = WindowPlatforms.GLFW
 # applicationConfig.RendererApiSpec = ERendererSpec.OpenGL
 
-myApp = SimpleApp()
+myApp = SimpleApp().Run()

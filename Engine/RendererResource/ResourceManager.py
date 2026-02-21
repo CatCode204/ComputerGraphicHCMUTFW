@@ -1,7 +1,9 @@
 from Engine.Renderer.RendererAPI import ERendererSpec
 from Engine.RendererResource.OpenGL.OpenGLIndexBuffer import OpenGLIndexBuffer
 from Engine.RendererResource.OpenGL.OpenGLShader import OpenGLShader
+from Engine.RendererResource.OpenGL.OpenGLTexture import OpenGLTexture
 from Engine.RendererResource.OpenGL.OpenGLVertexBuffer import OpenGLVertexBuffer
+from Engine.RendererResource.Texture import Texture
 from Engine.RendererResource.VertexBuffer import VertexBuffer
 from Engine.RendererResource.IndexBuffer import IndexBuffer
 from Engine.RendererResource.Shader import Shader
@@ -44,6 +46,14 @@ class ResourceManager:
     def FreeShader(shader : Shader):
         ResourceManager.Implementor.FreeShaderImpl(shader)
 
+    @staticmethod
+    def CreateTexture(textureSrc : str) -> Texture:
+        return ResourceManager.Implementor.CreateTextureImpl(textureSrc)
+
+    @staticmethod
+    def FreeTexture(texture : Texture):
+        ResourceManager.Implementor.FreeTexture(texture)
+
     def OnShutdownImpl(self):
         pass
 
@@ -63,6 +73,12 @@ class ResourceManager:
         pass
 
     def FreeShaderImpl(self, shader : Shader):
+        pass
+
+    def CreateTextureImpl(self, textureSrc : str) -> Texture:
+        pass
+
+    def FreeTextureImpl(self, texture : Texture):
         pass
 
 class OpenGLResourceManager(ResourceManager):
@@ -86,3 +102,9 @@ class OpenGLResourceManager(ResourceManager):
 
     def FreeShaderImpl(self, shader : Shader):
         shader.Delete()
+
+    def CreateTextureImpl(self,textureSrc : str) -> Texture:
+        return OpenGLTexture(textureSrc)
+
+    def FreeTextureImpl(self,texture : Texture):
+        texture.Delete()

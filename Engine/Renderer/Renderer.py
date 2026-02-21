@@ -39,6 +39,11 @@ class Renderer:
         Renderer.RenderCommandQueue.EnqueueCommandCallback(renderCallBack)
 
     @staticmethod
+    def DrawElement(renderPrimitive : ERenderPrimitives, first : int, count : int):
+        renderCallBack = lambda: RendererCommand.DrawElement(renderPrimitive, first, count)
+        Renderer.RenderCommandQueue.EnqueueCommandCallback(renderCallBack)
+
+    @staticmethod
     def ClearColor(r : float,g : float, b : float, a : float):
         renderCallBack : Callable = lambda : RendererCommand.ClearColor(r,g,b,a)
         Renderer.RenderCommandQueue.EnqueueCommandCallback(renderCallBack)
