@@ -9,6 +9,7 @@ from Engine.Core.InputSystem.EKeycode import EKeycode
 from Engine.Core.InputSystem.EKeystate import EKeyState
 from Engine.Core.InputSystem.EMouseButton import EMouseButton
 from Engine.Core.InputSystem.InputState import InputState
+from Engine.Core.InputSystem.ECursorMode import ECursorMode
 
 
 class NativeWindow(ABC):
@@ -16,19 +17,12 @@ class NativeWindow(ABC):
         self._windowSize = windowSize
         self._title = title
         self._eventDispatcher : EventDispatcher = None
-        self._inputState : InputState = None
 
     def SetWindowSize(self, windowSize : tuple[int,int]):
         self._windowSize = windowSize
 
     def SetTitle(self, title : str):
         self._title = title
-
-    def SetInputState(self,inputState : InputState):
-        self._inputState = inputState
-
-    def GetInputState(self):
-        return self._inputState
 
     def SetEventDispatcher(self, eventDispatcher : EventDispatcher):
         self._eventDispatcher = eventDispatcher
@@ -67,6 +61,10 @@ class NativeWindow(ABC):
             self._eventDispatcher.EventDispatch("MouseButtonReleasedEvent",eventCtx)
 
     @abstractmethod
+    def GetWindowObject(self):
+        pass
+
+    @abstractmethod
     def Init(self):
         pass
 
@@ -84,4 +82,8 @@ class NativeWindow(ABC):
 
     @abstractmethod
     def Shutdown(self):
+        pass
+
+    @abstractmethod
+    def GetDeltaTime(self) -> float:
         pass

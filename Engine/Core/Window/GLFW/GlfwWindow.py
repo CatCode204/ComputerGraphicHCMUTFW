@@ -4,6 +4,7 @@ from Engine.Core.InputSystem.EMouseButton import EMouseButton
 from Engine.Core.InputSystem.GLFW.GLFWKeyboard import GLFWKeyboard
 from Engine.Core.InputSystem.GLFW.GLFWMouse import GLFWMouseInput
 from Engine.Core.InputSystem.InputState import InputState
+from Engine.Core.InputSystem.ECursorMode import ECursorMode
 from Engine.Core.Window.NativeWindow import NativeWindow
 import glfw
 
@@ -14,7 +15,8 @@ class GlfwWindow(NativeWindow):
 
         self._lastFrameX : float = 0
         self._lastFrameY : float = 0
-        self._firstInit : bool = False
+        self._firstInit : bool = True
+        self._lastTime : float = 0
 
     def Init(self):
         glfw.init()
@@ -25,13 +27,12 @@ class GlfwWindow(NativeWindow):
         glfw.make_context_current(self.__window)
 
         glfw.set_window_size_callback(self.__window,lambda window,width,height : self._OnChangeSize(width, height))
-        self._inputState = InputState()
-        self._inputState.MouseInput = GLFWMouseInput(self.__window)
-        self._inputState.KeyBoardInput = GLFWKeyboard(self.__window)
-
         glfw.set_key_callback(self.__window, self._OnKeyCallbackGLFW)
         glfw.set_cursor_pos_callback(self.__window,self._OnMouseMovedGLFW)
         glfw.set_mouse_button_callback(self.__window,self._OnMouseButtonGLFW)
+
+    def GetWindowObject(self):
+        return self.__window
 
     def ShouldClose(self):
         return glfw.window_should_close(self.__window)
@@ -71,3 +72,9 @@ class GlfwWindow(NativeWindow):
 
         if action == glfw.RELEASE:
             self._OnMouseButtonCallback(EMouseButton(button),EKeyState.Released)
+
+    def GetDeltaTime(self) -> float:
+        time = glfw.get_time()
+        deltaTime = time - self._lastTime
+        self._lastTime = time
+        return deltaTime

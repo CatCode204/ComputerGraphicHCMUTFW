@@ -1,5 +1,6 @@
 from typing import Callable
 
+from Engine.Renderer.EBufferModeSpec import EBufferModeSpec
 from Engine.Renderer.ERenderPrimitives import ERenderPrimitives
 from Engine.Renderer.RenderCommandQueue import RenderCommandQueue
 from Engine.Renderer.RendererAPI import ERendererSpec
@@ -47,6 +48,21 @@ class Renderer:
     def ClearColor(r : float,g : float, b : float, a : float):
         renderCallBack : Callable = lambda : RendererCommand.ClearColor(r,g,b,a)
         Renderer.RenderCommandQueue.EnqueueCommandCallback(renderCallBack)
+
+    @staticmethod
+    def EnableBufferMode(bufferModeSpec : EBufferModeSpec):
+        renderCallBack: Callable = lambda: RendererCommand.EnableBufferMode(bufferModeSpec)
+        Renderer.RenderCommandQueue.EnqueueCommandCallback(renderCallBack)
+
+    @staticmethod
+    def DisableBufferMode(bufferModeSpec : EBufferModeSpec):
+        renderCallBack: Callable = lambda: RendererCommand.DisableBufferMode(bufferModeSpec)
+        Renderer.RenderCommandQueue.EnqueueCommandCallback(renderCallBack)
+
+    @staticmethod
+    def ClearBuffers():
+        rendererCallback: Callable = lambda: RendererCommand.ClearBuffers()
+        Renderer.RenderCommandQueue.EnqueueCommandCallback(rendererCallback)
 
     @staticmethod
     def Shutdown():

@@ -5,9 +5,12 @@ from Engine.Core.InputSystem.EMouseButton import EMouseButton
 from Engine.Core.InputSystem.MouseInput import MouseInput
 
 class GLFWMouseInput(MouseInput):
-    def __init__(self,window,position : tuple[int,int] = (0,0), offset : tuple[int,int] = (0,0), scroll : tuple[int,int] = (0,0)):
+    def __init__(self,window = None ,position : tuple[int,int] = (0,0), offset : tuple[int,int] = (0,0), scroll : tuple[int,int] = (0,0)):
         super().__init__(position,offset,scroll)
         self._window = window
+
+    def SetWindow(self,windowObj):
+        self._window = windowObj
 
     def IsPressed(self, button: EMouseButton) -> bool:
         return self.GetState(button) == EKeyState.Pressed

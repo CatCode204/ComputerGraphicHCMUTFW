@@ -3,9 +3,13 @@ from Engine.Core.Window.WindowPlatforms import WindowPlatforms
 
 from Engine.Core.Window.GLFW.GlfwWindow import GlfwWindow
 
-class WindowFactory:
-    @staticmethod
-    def CreateInstance(windowPlatform : WindowPlatforms) -> NativeWindow:
-        if windowPlatform == WindowPlatforms.GLFW:
-            return GlfwWindow()
-        raise Exception("Window platform not supported")
+from abc import ABC, abstractmethod
+
+class WindowFactory(ABC):
+    @abstractmethod
+    def CreateWindow(self) -> NativeWindow:
+        pass
+
+    @abstractmethod
+    def CreateInputState(self):
+        pass

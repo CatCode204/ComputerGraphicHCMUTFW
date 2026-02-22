@@ -53,7 +53,7 @@ class TriangleApp(Application):
         self.indexBuffer = IndexBuffer.Create()
         self.indexBuffer.SetData(self.__indices,3 * 4)
 
-    def _ClientLoop(self):
+    def _ClientLoop(self,delta):
         self.shader.Bind()
         self.vertexBuffer2.Bind()
         self.indexBuffer.Bind()

@@ -41,7 +41,3 @@ class VertexBuffer(ABC):
     @abstractmethod
     def SetData(self, data, size : int, renderMode : ERenderMode = ERenderMode.Static):
         pass
-
-    @abstractmethod
-    def Delete(self):
-        pass

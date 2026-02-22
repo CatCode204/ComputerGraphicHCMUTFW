@@ -5,8 +5,11 @@ from Engine.Core.InputSystem.KeyboardInput import KeyboardInput
 import glfw
 
 class GLFWKeyboard(KeyboardInput):
-    def __init__(self, window):
+    def __init__(self, window = None):
         self._window = window
+
+    def SetWindow(self,objWindow):
+        self._window = objWindow
 
     def IsHeld(self, keycode: EKeycode) -> bool:
         return self.GetState(keycode) == EKeyState.Held

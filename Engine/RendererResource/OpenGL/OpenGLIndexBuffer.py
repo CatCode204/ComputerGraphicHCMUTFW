@@ -1,5 +1,5 @@
-from ..ERenderMode import ERenderMode
-from ..IndexBuffer import IndexBuffer
+from Engine.RendererResource.ERenderMode import ERenderMode
+from Engine.RendererResource.IndexBuffer import IndexBuffer
 
 import OpenGL.GL as GL
 
