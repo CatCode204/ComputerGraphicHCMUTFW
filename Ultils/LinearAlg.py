@@ -5,7 +5,19 @@ import operator
 
 class Vector:
     def __init__(self,*values):
-        self.__v = np.array(values, dtype=float)
+        self.__v = np.array(values, dtype=float).flatten()
+
+    @property
+    def x(self):
+        return self.__v[0]
+
+    @property
+    def y(self):
+        return self.__v[1]
+
+    @property
+    def z(self):
+        return self.__v[2]
 
     @property
     def NumpyVector(self):
@@ -20,16 +32,12 @@ class Vector:
 
     @property
     def Dimension(self):
-        return len(self.__v.shape)
-
-    @staticmethod
-    def Length(vector : "Vector") -> float:
-        return vector.Length
+        return len(self.__v)
 
     @staticmethod
     def Normalized(vector : "Vector") -> "Vector":
-        length = Vector.Length(vector)
-        return vector.NumpyVector / length
+        length = vector.Length
+        return vector / length
 
     def __add__(self, other):
         if isinstance(other, Vector):
@@ -44,10 +52,16 @@ class Vector:
             raise ArithmeticError("Cannot Subtract Vector with a Scalar")
 
     def __mul__(self, other):
-        if isinstance(other, (int,float)):
+        if isinstance(other, Number):
             return Vector(self.NumpyVector * other)
         else:
             raise ArithmeticError("Cannot Mul Vector with a Vector")
+
+    def __truediv__(self, other):
+        if isinstance(other, Number):
+            return Vector(self.NumpyVector / other)
+        else:
+            raise ArithmeticError("Cannot Divide Vector with a type not a scalar")
 
     def __neg__(self):
         return Vector(-self.NumpyVector)
@@ -82,7 +96,7 @@ class Matrix:
     # =========================
     def _elementwise(self, other, op):
         if isinstance(other, Matrix):
-            if self.shape != other.shape:
+            if self.Shape != other.Shape:
                 raise ValueError("Matrix shape mismatch")
             return Matrix(op(self._m, other._m))
         elif isinstance(other, (int, float)):
@@ -119,7 +133,7 @@ class Matrix:
 
     def __rmul__(self, other):
         # scalar * Matrix
-        if isinstance(other, (int, float)):
+        if isinstance(other, Number):
             return Matrix(other * self._m)
 
         raise ArithmeticError("Can't find suitable mul op with that value type")
@@ -217,8 +231,8 @@ class Matrix:
         rotation = np.identity(4)
         rotation[:3, :3] = np.vstack([right.NumpyVector, up.NumpyVector, (-view).NumpyVector])
 
-        eyeX, eyeY, eyeZ = -eye.NumpyVector
-        return Matrix(rotation) * Matrix.CreateTranslateMatrix(-eyeX,-eyeY,-eyeZ)
+        eyeX, eyeY, eyeZ = (-eye).NumpyVector
+        return Matrix(rotation) * Matrix.CreateTranslateMatrix(eyeX,eyeY,eyeZ)
 
 class Quaternion:
     def __init__(self,x = 0.0, y = 0.0, z = 0.0, w = 1.0):
@@ -230,15 +244,17 @@ class Quaternion:
 
     @staticmethod
     def CreateQuaternionFromAngle(axis : Vector, angleInDegrees = 0) -> "Quaternion":
-        sin,cos = math.sin(angleInDegrees / 2), math.cos(angleInDegrees / 2)
+        angle = math.radians(angleInDegrees)
+        sin,cos = math.sin(angle / 2), math.cos(angle / 2)
         x,y,z = (Vector.Normalized(axis) * sin).NumpyVector
         return Quaternion(x,y,z,cos)
 
     @staticmethod
     def CreateQuaternionFromEuler(yawInDegree=0.0, pitchInDegree=0.0, rollInDegree=0.0):
-        siy, coy = math.sin(yawInDegree * 0.5), math.cos(yawInDegree * 0.5)
-        sir, cor = math.sin(rollInDegree * 0.5), math.cos(rollInDegree * 0.5)
-        sip, cop = math.sin(pitchInDegree * 0.5), math.cos(pitchInDegree * 0.5)
+        yaw, pitch, roll = math.radians(yawInDegree), math.radians(pitchInDegree), math.radians(rollInDegree)
+        siy, coy = math.sin(yaw * 0.5), math.cos(yaw * 0.5)
+        sir, cor = math.sin(roll * 0.5), math.cos(roll * 0.5)
+        sip, cop = math.sin(pitch * 0.5), math.cos(pitch * 0.5)
         return Quaternion(x=coy * sir * cop - siy * cor * sip, y=coy * cor * sip + siy * sir * cop,
                           z=siy * cor * cop - coy * sir * sip, w=coy * cor * cop + siy * sir * sip)
 
@@ -252,6 +268,18 @@ class Quaternion:
                                 [q1[1], q1[0], -q1[3], q1[2]],
                                 [q1[2], q1[3], q1[0], -q1[1]],
                                 [q1[3], -q1[2], q1[1], q1[0]]]), q2)
+
+    def Conjugate(self) -> "Quaternion":
+        return Quaternion(x=-self._q[1], y=-self._q[2], z=-self._q[3], w=self._q[0])
+
+    def Inverse(self):
+        norm_sq = np.sum(self._q ** 2)
+        return Quaternion(
+            -self._q[1] / norm_sq,
+            -self._q[2] / norm_sq,
+            -self._q[3] / norm_sq,
+            self._q[0] / norm_sq
+        )
 
     @property
     def ToMatrix(self) -> "Matrix":
